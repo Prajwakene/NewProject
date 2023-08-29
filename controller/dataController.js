@@ -4,8 +4,8 @@ class DataController {
   static emitData(socket, influx) {
     // Generate encrypted data and send it to the client
     setInterval(() => {
-      const names = [...]; // Your array of names
-      const cities = [...]; // Your array of cities
+      const names = []; // Your array of names
+      const cities = []; // Your array of cities
 
       const randomName = names[Math.floor(Math.random() * names.length)];
       const randomCity = cities[Math.floor(Math.random() * cities.length)];
