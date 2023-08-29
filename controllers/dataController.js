@@ -1,4 +1,4 @@
-const crypto = require("crypto");
+const crypto = require('crypto-js')
 
 class DataController {
   static emitData(socket, influx) {
@@ -212,11 +212,19 @@ class DataController {
       const randomName = names[Math.floor(Math.random() * names.length)];
       const randomCity = cities[Math.floor(Math.random() * cities.length)];
 
-      const data = { name: randomName, city: randomCity };
+      const data = {
+        name: randomName,
+        city: randomCity,
+      };
 
-      // Encrypt the data
-      const cipher = crypto.createCipher("aes-256-cbc", "your-secret-key");
-      let encryptedData = cipher.update(JSON.stringify(data), "utf8", "hex");
+      const algorithm = "aes-256-cbc";
+      const key = Buffer.from('your_secret_key', 'utf-8');
+      const iv = crypto.randomBytes(16); // Generate a random IV
+
+      const cipher = crypto.createCipheriv(algorithm, key, iv);
+
+      // Encrypt your data using the cipher and IV
+      let encryptedData = cipher.update("your_data_to_encrypt", "utf-8", "hex");
       encryptedData += cipher.final("hex");
 
       socket.emit("data", encryptedData);
@@ -225,7 +233,10 @@ class DataController {
       influx.writePoints([
         {
           measurement: "data",
-          fields: { name: randomName, city: randomCity },
+          fields: {
+            name: randomName,
+            city: randomCity,
+          },
         },
       ]);
     }, 5000); // Send data every 5 seconds
