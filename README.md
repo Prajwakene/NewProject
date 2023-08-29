@@ -9,3 +9,18 @@
 ├── views
 │   └── index.ejs
 ├── app.js
+
+- project-root
+  - backend
+    - controllers
+    - models
+    - routes
+    - utils
+  - frontend
+  - config
+  - public
+  - node_modules
+  - app.js
+  - package.json
+  - ...
+

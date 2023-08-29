@@ -1,4 +1,4 @@
-const crypto = require('crypto-js')
+const crypto = require('crypto')
 
 class DataController {
   static emitData(socket, influx) {
