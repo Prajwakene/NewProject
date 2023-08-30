@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import socketIOClient from 'socket.io-client';
-import axios from 'axios';
+import React, { useEffect, useState } from "react";
+import socketIOClient from "socket.io-client";
+import axios from "axios";
 
-const serverEndpoint = 'http://localhost:3001'; // Change this to your backend endpoint
+const serverEndpoint = "http://localhost:3001"; // Change this to your backend endpoint
 
 function App() {
   const [data, setData] = useState([]);
@@ -11,12 +11,32 @@ function App() {
   useEffect(() => {
     const socket = socketIOClient(serverEndpoint);
 
-    socket.on('data', (encryptedData) => {
-      // Decrypt and validate data here, then save it to MongoDB
-      // Update successRate accordingly
-      // You may want to use Axios to send data to your backend
-    });
+    socket.on("data", async (encryptedData) => {
+      try {
+        // Decrypt the data
+        const decryptedData = decryptMessage(encryptedData, "7f371d3b93863e513087c19a353db55ce9fabb43d34a895e3783afaef6662b15"); // Replace with your secret key
 
+        // Parse the decrypted JSON
+        const payload = JSON.parse(decryptedData);
+
+        // Validate data here using the secret_key
+        const isValid = validateData(payload.secret_key);
+
+        if (isValid) {
+          // Save data to MongoDB using Axios or fetch
+          await axios.post("http://localhost:3001/save-data", payload);
+
+          // Update success rate
+          setSuccessRate((prevSuccessRate) => prevSuccessRate + 1);
+        } else {
+          // Data validation failed, handle it as needed
+          console.error("Data validation failed:", payload);
+        }
+      } catch (error) {
+        // Handle decryption errors
+        console.error("Error decrypting or processing data:", error);
+      }
+    });
     return () => {
       socket.disconnect();
     };
@@ -28,9 +48,7 @@ function App() {
       <div>
         <p>Success Rate: {successRate}%</p>
       </div>
-      <div>
-        {/* Display data here */}
-      </div>
+      <div>{renderData()}</div>
     </div>
   );
 }
