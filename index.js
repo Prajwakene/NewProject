@@ -9,8 +9,6 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
 
-const mongoURI = 'mongodb://localhost:27017/timeseriesdb'; // Change this to your MongoDB URI
-mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true });
 
 // MongoDB connection setup
 mongoose.connect("mongodb://127.0.0.1:27017/time_series_db", {
@@ -80,6 +78,6 @@ function encryptMessage(message, secretKey) {
   // Return the encrypted message
 }
 
-server.listen(3001, () => {
-  console.log('Server is running on port 3001');
+server.listen(8000, () => {
+  console.log('Server is running on port 8000');
 });
