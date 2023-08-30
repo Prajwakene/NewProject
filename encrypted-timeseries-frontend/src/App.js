@@ -5,15 +5,51 @@ import axios from "axios";
 const serverEndpoint = "http://localhost:3001"; // Change this to your backend endpoint
 
 
-// Function to decrypt a message
+// Function to decrypt a message using AES-256-CTR
 function decryptMessage(encryptedMessage, secretKey) {
-  // Implement decryption logic here
+  try {
+    // Convert the hexadecimal string to a Buffer
+    const encryptedBuffer = Buffer.from(encryptedMessage, 'hex');
+
+    // Extract the IV (first 16 bytes) from the encrypted message
+    const iv = encryptedBuffer.slice(0, 16);
+
+    // Create a decipher with AES-256-CTR
+    const decipher = crypto.createDecipheriv('aes-256-ctr', Buffer.from(secretKey), iv);
+
+    // Decrypt the message
+    const decryptedBuffer = Buffer.concat([decipher.update(encryptedBuffer.slice(16)), decipher.final()]);
+
+    // Convert the decrypted Buffer to a string (assuming the original message was a string)
+    const decryptedMessage = decryptedBuffer.toString('utf-8');
+
+    return decryptedMessage;
+  } catch (error) {
+    console.error('Error decrypting message:', error);
+    return null; // Return null in case of decryption failure
+  }
 }
 
-// Function to validate data
-function validateData(secretKey) {
-  // Implement data validation logic here
+// Function to validate data using the secret key
+function validateData(payload, secretKey) {
+  try {
+    // Calculate the expected secret_key from the payload
+    const expectedSecretKey = crypto.createHash('sha256')
+      .update(JSON.stringify({
+        name: payload.name,
+        origin: payload.origin,
+        destination: payload.destination,
+      }))
+      .digest('hex');
+
+    // Compare the expectedSecretKey with the provided secretKey
+    return expectedSecretKey === secretKey;
+  } catch (error) {
+    console.error('Error validating data:', error);
+    return false; // Return false in case of validation failure
+  }
 }
+
 
 
 // Function to render data
