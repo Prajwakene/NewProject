@@ -54,7 +54,7 @@ function validateData(payload, secretKey) {
 
 // Function to render data
 const renderData = (data) => {
-  if (data.length === 0) {
+  if (!Array.isArray(data) || data.length === 0) {
     return <p>No data available.</p>;
   }
 
@@ -67,6 +67,8 @@ const renderData = (data) => {
     </div>
   ));
 };
+
+
 function App() {
   const [data, setData] = useState([]);
   const [successRate, setSuccessRate] = useState(0);
@@ -111,7 +113,7 @@ function App() {
       <div>
         <p>Success Rate: {successRate}%</p>
       </div>
-      <div>{renderData()}</div>
+      <div>{renderData(data)}</div>
     </div>
   );
 }
