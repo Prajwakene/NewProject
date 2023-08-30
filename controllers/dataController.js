@@ -218,10 +218,12 @@ class DataController {
       };
 
       const algorithm = "aes-256-cbc";
-      const key = Buffer.from('your_secret_key', 'utf-8');
-      const iv = crypto.randomBytes(16); // Generate a random IV
-
-      const cipher = crypto.createCipheriv(algorithm, key, iv);
+      const key = Buffer.from('7f371d3b93863e513087c19a353db55ce9fabb43d34a895e3783afaef6662b15', 'utf-8');
+      const iv = crypto.randomBytes(16); // Generate a random 16-byte IV
+      // Generate a random 32-byte key
+      const encryptionKey = crypto.randomBytes(32).toString('hex');
+      console.log('Encryption Key:', encryptionKey);
+      const cipher = crypto.createCipheriv('aes-256-ctr', encryptionKey, iv);
 
       // Encrypt your data using the cipher and IV
       let encryptedData = cipher.update("your_data_to_encrypt", "utf-8", "hex");

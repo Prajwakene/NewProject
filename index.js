@@ -2,13 +2,12 @@ const express = require("express");
 const http = require("http");
 const mongoose = require("mongoose");
 const socketIo = require("socket.io");
-const cryptoJS = require("crypto-js");
+const crypto = require("crypto");
 const Influx = require("influx");
 const path = require("path");
 const { DataController } = require("./controllers/dataController");
+
 const routes = require("./routes/index");
-const Emitter = require('./emitter');
-const Listener = require('./listener')
 
 const app = express();
 const server = http.createServer(app);
@@ -40,7 +39,6 @@ app.get("/", (req, res) => {
   res.render("index");
 });
 
-// const mongoURI = 'mongodb://localhost:27017/time_series_db';
 
 // MongoDB connection setup
 mongoose.connect("mongodb://127.0.0.1:27017/time_series_db", {
@@ -49,6 +47,7 @@ mongoose.connect("mongodb://127.0.0.1:27017/time_series_db", {
 });
 
 const db = mongoose.connection;
+
 
 // Listen for the MongoDB connection event
 db.on("connected", () => {
@@ -65,7 +64,7 @@ io.on("connection", (socket) => {
   DataController.emitData(socket, influx);
 });
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8000;
 server.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
