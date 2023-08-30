@@ -63,7 +63,7 @@ io.on('connection', (socket) => {
       };
 
       const secret_key = generateSecretKey(originalMessage);
-      const encryptedMessage = encryptMessage(JSON.stringify(originalMessage), 'your-secret-key'); // Change this key
+      const encryptedMessage = encryptMessage(JSON.stringify(originalMessage), '7f371d3b93863e513087c19a353db55ce9fabb43d34a895e3783afaef6662b15'); // Change this key
 
       messages.push({ ...originalMessage, secret_key, encryptedMessage });
     }
@@ -74,8 +74,17 @@ io.on('connection', (socket) => {
 
 // Function to encrypt a message
 function encryptMessage(message, secretKey) {
-  // Implement AES-256-CTR encryption here
-  // Return the encrypted message
+  // Generate a random initialization vector (IV)
+  const iv = crypto.randomBytes(16);
+
+  // Create a Cipher using AES-256-CTR
+  const cipher = crypto.createCipheriv('aes-256-ctr', Buffer.from(secretKey), iv);
+
+  // Encrypt the message
+  const encrypted = Buffer.concat([iv, cipher.update(message, 'utf-8'), cipher.final()]);
+
+  // Return the encrypted message as a hexadecimal string
+  return encrypted.toString('hex');
 }
 
 server.listen(8000, () => {

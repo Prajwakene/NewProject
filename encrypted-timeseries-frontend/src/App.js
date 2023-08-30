@@ -76,8 +76,7 @@ const renderData = (data) => {
 };
 
 function App() {
-  const [data, setData] = useState([]);
-  setData(newData);
+  const [data] = useState([]);
 
   const [successRate, setSuccessRate] = useState(0);
 
